@@ -1,0 +1,1359 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>LOMZ — Website Testing & QA Feedback</title>
+    <meta
+      name="description"
+      content="QA audit, feedback and bug reporting log for LOMZ (carrylomz.netlify.app)."
+    />
+    <link rel="icon" href="./assets/lomz-logo.webp" />
+
+    <style>
+      @font-face {
+        font-family: "Clash Display";
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+        src: url("./assets/clash-display-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Clash Display";
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+        src: url("./assets/clash-display-500.woff2") format("woff2");
+      }
+
+      :root {
+        --p: #fbfaf8;
+        --p2: #f0ece7;
+        --ink: #201a18;
+        --soft: #6c605b;
+        --rule: #e1d9d1;
+        --tint: #ebdad6;
+        --wine: #9f2738;
+        --wine-tint: #f7eae8;
+        --g: clamp(18px, 4.5vw, 64px);
+        --serif:
+          "Clash Display", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        --sans:
+          "Clash Display", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        --e: cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --p: #171211;
+          --p2: #211917;
+          --ink: #f0e8e1;
+          --soft: #a89790;
+          --rule: #382d2a;
+          --tint: #2b1e1c;
+          --wine-tint: #2e191c;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--p);
+        color: var(--ink);
+        font: 400 16px/1.6 var(--sans);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      img,
+      video {
+        display: block;
+        max-width: 100%;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        background: none;
+        border: 0;
+        cursor: pointer;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: var(--serif);
+        font-weight: 500;
+        margin: 0;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        text-wrap: balance;
+      }
+      :focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 3px;
+      }
+
+      /* Button styles matching LOMZ */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 48px;
+        padding: 0 26px;
+        border-radius: 99px;
+        background: var(--ink);
+        color: var(--p);
+        font-size: 14px;
+        font-weight: 500;
+        transition:
+          transform 0.3s var(--e),
+          opacity 0.3s,
+          background-color 0.3s;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+      .btn svg {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+      .btn.o {
+        background: none;
+        color: inherit;
+        border: 1px solid currentColor;
+      }
+      .btn.o:hover {
+        background: var(--ink);
+        color: var(--p);
+      }
+      .btn.sm {
+        min-height: 38px;
+        padding: 0 18px;
+        font-size: 13px;
+      }
+
+      /* Header */
+      .hd {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        padding: calc(14px + env(safe-area-inset-top, 0px)) var(--g) 14px;
+        background: color-mix(in srgb, var(--p) 92%, transparent);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--rule);
+        transition:
+          background 0.4s,
+          color 0.4s;
+      }
+      .hd .l {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .tag-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 4px 12px;
+        border-radius: 99px;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        background: var(--tint);
+        color: var(--ink);
+        border: 1px solid var(--rule);
+      }
+      .tag-badge .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #34a853;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(0.8);
+        }
+      }
+
+      .lg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 0;
+      }
+      .lg img {
+        height: 42px;
+        width: auto;
+      }
+      .hd .r {
+        justify-self: end;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      /* Page container */
+      main {
+        flex: 1;
+        width: 100%;
+        max-width: 1360px;
+        margin: 0 auto;
+        padding: clamp(36px, 5vw, 68px) var(--g) clamp(60px, 8vw, 120px);
+      }
+
+      /* Hero / Header block */
+      .hero-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-bottom: clamp(32px, 5vw, 56px);
+        border-bottom: 1px solid var(--rule);
+        padding-bottom: clamp(28px, 4vw, 44px);
+      }
+      .kicker {
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--soft);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .hero-meta h1 {
+        font-size: clamp(32px, 5vw, 64px);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+      .hero-desc {
+        color: var(--soft);
+        font-size: clamp(16px, 1.8vw, 19px);
+        max-width: 58ch;
+        margin: 6px 0 0;
+      }
+
+      .test-target-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        background: var(--p2);
+        border: 1px solid var(--rule);
+        border-radius: 16px;
+        padding: 16px 22px;
+        margin-top: 18px;
+        font-size: 14px;
+      }
+      .target-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .target-url {
+        font-weight: 500;
+        color: var(--ink);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-bottom: 1px dotted currentColor;
+      }
+      .target-meta-item {
+        color: var(--soft);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* Stats Overview */
+      .metrics-grid {
+        display: flex;
+        gap: 14px;
+        margin-bottom: clamp(36px, 5vw, 64px);
+      }
+      .metric-card {
+        background: var(--p2);
+        border: 1px solid var(--rule);
+        border-radius: 18px;
+        padding: 24px 32px;
+        display: inline-flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 240px;
+        transition:
+          transform 0.3s var(--e),
+          border-color 0.3s;
+      }
+      .metric-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--ink);
+      }
+      .metric-num {
+        font-family: var(--serif);
+        font-size: clamp(28px, 3.6vw, 44px);
+        font-weight: 500;
+        line-height: 1;
+      }
+      .metric-lbl {
+        color: var(--soft);
+        font-size: 13.5px;
+      }
+
+      /* Findings Section Header */
+      .findings-header {
+        margin-bottom: 28px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--rule);
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .findings-title {
+        font: 500 clamp(30px, 3.8vw, 44px) / 1.1 var(--serif);
+        letter-spacing: -0.025em;
+        color: var(--ink);
+      }
+
+      /* Findings Container */
+      #findings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      /* Empty state card */
+      .empty-state {
+        background: var(--p2);
+        border: 1px dashed var(--rule);
+        border-radius: 24px;
+        padding: clamp(60px, 9vw, 110px) 24px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        position: relative;
+        overflow: hidden;
+      }
+      .empty-icon-wrap {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: var(--tint);
+        display: grid;
+        place-items: center;
+        color: var(--ink);
+        margin-bottom: 6px;
+        transition: transform 0.4s var(--e);
+      }
+      .empty-state:hover .empty-icon-wrap {
+        transform: scale(1.08);
+      }
+      .empty-icon-wrap svg {
+        width: 32px;
+        height: 32px;
+      }
+      .empty-title {
+        font-size: clamp(24px, 3.2vw, 36px);
+        max-width: 22ch;
+      }
+      .empty-desc {
+        color: var(--soft);
+        max-width: 50ch;
+        font-size: 15.5px;
+        margin: 0;
+      }
+      .empty-hints {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 10px;
+      }
+      .hint-chip {
+        background: var(--p);
+        border: 1px solid var(--rule);
+        padding: 6px 14px;
+        border-radius: 99px;
+        font-size: 12.5px;
+        color: var(--soft);
+      }
+
+      /* Finding Item Card Structure (ready for dynamic or manual injection) */
+      .finding-card {
+        background: var(--p2);
+        border: 1px solid var(--rule);
+        border-radius: 22px;
+        padding: clamp(22px, 3.5vw, 36px);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+        gap: clamp(20px, 4vw, 44px);
+        align-items: start;
+        transition:
+          border-color 0.3s,
+          transform 0.3s var(--e);
+      }
+      .finding-card:hover {
+        border-color: var(--ink);
+      }
+      @media (max-width: 900px) {
+        .finding-card {
+          grid-template-columns: 1fr;
+        }
+      }
+      .finding-card.no-media {
+        grid-template-columns: 1fr;
+      }
+      .finding-info {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .finding-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .finding-idx {
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--soft);
+      }
+      .finding-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .finding-badge.critical {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .finding-badge.major {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .finding-badge.minor {
+        background: #e0f2fe;
+        color: #075985;
+      }
+      .finding-badge.suggestion {
+        background: var(--tint);
+        color: var(--ink);
+      }
+      .finding-badge.question {
+        background: #ede9fe;
+        color: #5b21b6;
+      }
+
+      .finding-title {
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      .finding-desc {
+        color: var(--soft);
+        font-size: 15px;
+        margin: 0;
+        line-height: 1.6;
+      }
+      .finding-specs {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid var(--rule);
+      }
+      .finding-specs li {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--rule);
+        font-size: 13.5px;
+      }
+      .finding-specs li span:first-child {
+        color: var(--soft);
+        flex-shrink: 0;
+      }
+      .finding-specs li strong {
+        font-weight: 500;
+        text-align: right;
+        max-width: 68%;
+      }
+
+      .finding-media {
+        background: var(--tint);
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 4/3;
+        position: relative;
+        cursor: zoom-in;
+        display: grid;
+        place-items: center;
+      }
+      /* Screenshots keep their own shape so annotations are never cropped */
+      .finding-media:has(img) {
+        aspect-ratio: auto;
+        background: #1e1b19;
+      }
+      .finding-media img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        transition: transform 0.5s var(--e);
+      }
+      .finding-media:hover img {
+        transform: scale(1.03);
+      }
+      .media-zoom-hint {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background: rgba(32, 26, 24, 0.75);
+        color: #fff;
+        backdrop-filter: blur(8px);
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-size: 11px;
+        pointer-events: none;
+      }
+      .finding-media-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        width: 100%;
+      }
+      .finding-media-label {
+        font-size: 12px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--soft);
+        margin-bottom: 6px;
+      }
+
+      /* Lightbox Modal */
+      .lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: rgba(23, 18, 17, 0.94);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        padding: 24px;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      .lightbox.active {
+        display: flex;
+      }
+      .lightbox-img {
+        max-width: 90vw;
+        max-height: 82vh;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+      }
+      .lightbox-caption {
+        color: #f6ece8;
+        margin-top: 16px;
+        font-size: 14.5px;
+        text-align: center;
+        max-width: 60ch;
+      }
+      .lightbox-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 20px;
+        transition: background 0.2s;
+      }
+      .lightbox-close:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      /* Custom Cursor matching LOMZ */
+      .cur {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        pointer-events: none;
+        mix-blend-mode: difference;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .cur i {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        margin: -16px;
+        border: 1px solid #fff;
+        border-radius: 50%;
+        transition:
+          transform 0.15s var(--e),
+          background 0.15s;
+      }
+      .cur i:after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 4px;
+        height: 4px;
+        margin: -2px;
+        border-radius: 50%;
+        background: #fff;
+      }
+      .cur.v {
+        opacity: 1;
+      }
+      .cur.on i {
+        transform: scale(2.2);
+        background: #fff;
+      }
+      body.cu,
+      body.cu * {
+        cursor: none !important;
+      }
+
+      /* Footer matching LOMZ */
+      .ft {
+        background: #1e1b19;
+        color: #f6ece8;
+        padding: clamp(56px, 7vw, 90px) var(--g) 28px;
+        margin-top: auto;
+      }
+      .fa {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        gap: 36px;
+        flex-wrap: wrap;
+        padding-bottom: clamp(36px, 5vw, 64px);
+      }
+      .fa h2 {
+        font: 500 clamp(28px, 4vw, 50px) / 1.15 var(--serif);
+        letter-spacing: -0.025em;
+        max-width: 26ch;
+        color: #f6ece8;
+      }
+      .ft-talk-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 54px;
+        padding: 0 34px;
+        border-radius: 99px;
+        background: #f6ece8;
+        color: #1e1b19;
+        font-family: var(--sans);
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        letter-spacing: -0.01em;
+        transition:
+          transform 0.3s var(--e),
+          background-color 0.25s,
+          color 0.25s,
+          box-shadow 0.25s;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+        flex-shrink: 0;
+      }
+      .ft-talk-btn:hover {
+        transform: translateY(-2px);
+        background: var(--wine);
+        color: #ffffff;
+        box-shadow: 0 10px 28px rgba(159, 39, 56, 0.45);
+      }
+      .ft-talk-btn svg {
+        width: 15px;
+        height: 15px;
+        transition: transform 0.25s var(--e);
+      }
+      .ft-talk-btn:hover svg {
+        transform: translateX(4px);
+      }
+      .fl {
+        height: 64px;
+        width: auto;
+        margin-bottom: 32px;
+      }
+      .fb {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: clamp(40px, 6vw, 70px);
+        font-size: 14.5px;
+      }
+      .fb h4 {
+        font: 400 13px var(--sans);
+        color: #f6ece890;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .fb a {
+        display: block;
+        margin-bottom: 8px;
+        width: fit-content;
+        color: #f6ece8d0;
+        transition: opacity 0.2s;
+      }
+      .fb a:hover {
+        opacity: 0.7;
+      }
+      .fc {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-top: 0;
+        padding-top: 24px;
+        border-top: 1px solid #f6ece826;
+        font-size: 12.5px;
+        color: #f6ece8a0;
+      }
+
+      /* Overall Impressions */
+      .impressions {
+        margin-bottom: clamp(40px, 6vw, 72px);
+        padding-bottom: clamp(36px, 5vw, 60px);
+        border-bottom: 1px solid var(--rule);
+      }
+      .imp-quote {
+        font: 500 clamp(40px, 7vw, 96px)/1 var(--serif);
+        letter-spacing: -0.035em;
+        margin: 14px 0 22px;
+      }
+      .imp-quote em {
+        font-style: normal;
+        color: var(--wine);
+      }
+      .imp-lead {
+        font-size: clamp(17px, 1.9vw, 21px);
+        max-width: 56ch;
+        margin: 0 0 clamp(28px, 4vw, 44px);
+        color: var(--ink);
+      }
+      .imp-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+      .imp-card {
+        background: var(--p2);
+        border: 1px solid var(--rule);
+        border-radius: 20px;
+        padding: clamp(22px, 2.6vw, 30px);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition:
+          transform 0.3s var(--e),
+          border-color 0.3s;
+      }
+      .imp-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--ink);
+      }
+      .imp-num {
+        font-size: 12.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--soft);
+      }
+      .imp-card h3 {
+        font-size: clamp(22px, 2.4vw, 28px);
+      }
+      .imp-card p {
+        margin: 0;
+        color: var(--soft);
+        font-size: 15px;
+      }
+      .imp-card.score {
+        background: var(--tint);
+      }
+      .score-val {
+        font: 500 clamp(44px, 5.5vw, 72px)/1 var(--serif);
+        letter-spacing: -0.03em;
+        color: var(--wine);
+      }
+      .score-val small {
+        font-size: 0.4em;
+        color: var(--soft);
+        letter-spacing: 0;
+      }
+      .score-bar {
+        height: 4px;
+        border-radius: 99px;
+        background: var(--rule);
+        overflow: hidden;
+      }
+      .score-bar i {
+        display: block;
+        height: 100%;
+        width: 85%;
+        background: var(--wine);
+        border-radius: inherit;
+      }
+      .imp-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: auto;
+        padding-top: 6px;
+      }
+      .imp-tags span {
+        font-size: 12px;
+        padding: 3px 10px;
+        border-radius: 99px;
+        border: 1px solid var(--rule);
+        background: var(--p);
+        color: var(--soft);
+      }
+      .imp-next {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: clamp(26px, 3.5vw, 40px);
+        font-size: 15px;
+        color: var(--soft);
+      }
+      .imp-next::before {
+        content: "";
+        width: 36px;
+        height: 1px;
+        background: currentColor;
+        flex-shrink: 0;
+      }
+
+      @media (max-width: 900px) {
+        .imp-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .metric-card {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Custom Cursor -->
+    <div class="cur" id="cur" aria-hidden="true"><i></i></div>
+
+    <!-- Header -->
+    <header class="hd">
+      <div class="l">
+        <div class="tag-badge">
+          <span class="dot"></span>
+          <span>Rain's Review</span>
+        </div>
+      </div>
+
+      <a
+        class="lg"
+        href="https://carrylomz.netlify.app"
+        target="_blank"
+        rel="noopener"
+        aria-label="LOMZ Home"
+      >
+        <img src="./assets/lomz-logo.webp" alt="LOMZ" />
+      </a>
+
+      <div class="r">
+        <a
+          class="btn o sm"
+          href="https://carrylomz.netlify.app"
+          target="_blank"
+          rel="noopener"
+        >
+          Visit Website ↗
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Hero / Title -->
+      <div class="hero-meta">
+        <div class="kicker">
+          <span>My Feedback</span>
+          <span>·</span>
+          <span>LOMZ - The Imani Bag</span>
+        </div>
+        <h1>Hello Mr. Falomo,</h1>
+        <p class="hero-desc">
+          So I wanted to give you proper feedback, so I thought, let me do it my
+          way as someone who builds and uses a lot of websites.
+        </p>
+      </div>
+
+      <!-- Overall Impressions -->
+      <section
+        class="impressions"
+        id="overall-impressions"
+        aria-labelledby="imp-title"
+      >
+        <div class="kicker">My First Impression</div>
+        <h2 class="imp-quote" id="imp-title">Wow, <em>just wow.</em></h2>
+        <p class="imp-lead">
+          You know, there are a few things I like about this website, but these
+          stood out to me the most:
+        </p>
+
+        <div class="imp-grid">
+          <article class="imp-card" id="imp-simplicity">
+            <span class="imp-num">01 — Stood out</span>
+            <h3>Simplicity</h3>
+            <p>
+              Straightforward design; the user knows exactly what to do and
+              where to find what.
+            </p>
+            <div class="imp-tags">
+              <span>Clear navigation</span><span>Intuitive</span>
+            </div>
+          </article>
+
+          <article class="imp-card" id="imp-communication">
+            <span class="imp-num">02 — Stood out</span>
+            <h3>Communication</h3>
+            <p>
+              As I read through, I could feel the words; there was genuineness,
+              openness, relatability, no use of unnecessary vocabulary, and
+              comprehension was 99%.
+            </p>
+            <div class="imp-tags">
+              <span>Genuine</span><span>Open</span><span>Relatable</span>
+            </div>
+          </article>
+
+          <article class="imp-card score" id="imp-experience">
+            <span class="imp-num">03 — My Experience</span>
+            <div class="score-val">8.5<small> / 10</small></div>
+            <div class="score-bar" role="img" aria-label="Rated 8.5 out of 10">
+              <i></i>
+            </div>
+            <p>
+              The page loaded quickly, and the images are very high quality.
+            </p>
+            <div class="imp-tags">
+              <span>Fast load</span><span>High-quality images</span>
+            </div>
+          </article>
+        </div>
+
+        <p class="imp-next">
+          I only have a few functional feedback points; I’ll also share some
+          non-functional feedback with you at the end.
+        </p>
+      </section>
+
+      <!-- Metrics Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-num" id="total-count">0</span>
+          <span class="metric-lbl">Total Observations</span>
+        </div>
+      </div>
+
+      <!-- Findings Heading -->
+      <div class="findings-header">
+        <h2 class="findings-title">All my Findings</h2>
+      </div>
+
+      <!-- Findings Section -->
+      <div id="findings-list">
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state-view">
+          <div class="empty-icon-wrap">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </div>
+          <h2 class="empty-title">Awaiting Feedback & Screenshots</h2>
+          <p class="empty-desc">
+            The stage is ready. Whenever you provide each feedback item with its
+            attached screenshot, it will appear here in chronological order with
+            full specifications, severity tag, and image zoom.
+          </p>
+          <div class="empty-hints">
+            <span class="hint-chip">1. Share your observation</span>
+            <span class="hint-chip">2. Attach screenshots</span>
+            <span class="hint-chip">3. Review live catalog</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Image Lightbox Modal -->
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog">
+      <button
+        class="lightbox-close"
+        id="lightbox-close"
+        aria-label="Close image preview"
+      >
+        ✕
+      </button>
+      <img
+        class="lightbox-img"
+        id="lightbox-img"
+        src=""
+        alt="Enlarged screenshot"
+      />
+      <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="ft">
+      <img class="fl" src="./assets/lomz-logo.webp" alt="LOMZ" />
+      <div class="fa">
+        <h2>
+          Feedback
+          <em style="color: #9f2738">no dey finish. </em>
+        </h2>
+        <div>
+          <a class="ft-talk-btn" href="https://wa.me/+2348135872383">
+            <span>Let's talk</span>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                d="M3 8h10M9 4l4 4-4 4"
+                stroke="currentColor"
+                stroke-width="1.6"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="fc">
+        <span>© <span id="yr"></span> LOMZ — Rain's review</span>
+        <span>Made for His Glory — Isaiah 43:7</span>
+      </div>
+    </footer>
+
+    <script>
+      // Set Current Year
+      document.getElementById("yr").textContent = new Date().getFullYear();
+
+      // Custom Cursor tracking
+      (() => {
+        const red = matchMedia("(prefers-reduced-motion:reduce)").matches;
+        if (matchMedia("(pointer:fine)").matches && innerWidth > 900 && !red) {
+          document.body.classList.add("cu");
+          const c = document.getElementById("cur");
+          window.addEventListener(
+            "pointermove",
+            (e) => {
+              c.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+              c.classList.add("v");
+              c.classList.toggle(
+                "on",
+                !!e.target.closest(
+                  "a, button, summary, .finding-media, .metric-card",
+                ),
+              );
+            },
+            { passive: true },
+          );
+        }
+      })();
+
+      // Lightbox Controls
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImg = document.getElementById("lightbox-img");
+      const lightboxCaption = document.getElementById("lightbox-caption");
+      const lightboxClose = document.getElementById("lightbox-close");
+
+      function openLightbox(src, captionText) {
+        lightboxImg.src = src;
+        lightboxCaption.textContent = captionText || "";
+        lightbox.classList.add("active");
+        lightbox.setAttribute("aria-hidden", "false");
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove("active");
+        lightbox.setAttribute("aria-hidden", "true");
+      }
+
+      lightboxClose.addEventListener("click", closeLightbox);
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox || e.target === lightboxClose) {
+          closeLightbox();
+        }
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && lightbox.classList.contains("active")) {
+          closeLightbox();
+        }
+      });
+
+      // Helper functions for dynamically adding finding items when user submits feedback
+      window.findingsData = [];
+
+      window.addFindingItem = function (item) {
+        // Hide empty state
+        const emptyState = document.getElementById("empty-state-view");
+        if (emptyState) emptyState.style.display = "none";
+
+        window.findingsData.push(item);
+        renderFindings();
+        updateMetrics();
+      };
+
+      function updateMetrics() {
+        const totalEl = document.getElementById("total-count");
+        if (totalEl) totalEl.textContent = window.findingsData.length;
+      }
+
+      function renderFindings(filter = "all") {
+        const list = document.getElementById("findings-list");
+        const emptyState = document.getElementById("empty-state-view");
+
+        let filtered = window.findingsData;
+        if (filter !== "all") {
+          filtered = filtered.filter((item) => {
+            if (filter === "critical")
+              return (
+                (item.severity || "").toLowerCase() === "critical" ||
+                (item.severity || "").toLowerCase() === "major"
+              );
+            if (filter === "ui")
+              return (
+                (item.category || "").toLowerCase().includes("ui") ||
+                (item.category || "").toLowerCase().includes("styling") ||
+                (item.category || "").toLowerCase().includes("ux")
+              );
+            if (filter === "responsive")
+              return (
+                (item.category || "").toLowerCase().includes("responsive") ||
+                (item.category || "").toLowerCase().includes("mobile")
+              );
+            if (filter === "functionality")
+              return (item.category || "").toLowerCase().includes("function");
+            if (filter === "suggestion")
+              return (
+                (item.severity || "").toLowerCase() === "suggestion" ||
+                (item.category || "").toLowerCase().includes("non-functional")
+              );
+            return true;
+          });
+        }
+
+        if (filtered.length === 0 && window.findingsData.length === 0) {
+          if (emptyState) emptyState.style.display = "flex";
+          return;
+        }
+
+        // Remove previously rendered cards except empty state
+        const existingCards = list.querySelectorAll(".finding-card");
+        existingCards.forEach((c) => c.remove());
+
+        filtered.forEach((item, index) => {
+          const imgs =
+            item.images ||
+            (item.image ? [{ src: item.image, caption: item.title }] : []);
+          const hasMedia = imgs.length > 0;
+          const hasSpecs = !!(item.page || item.actual);
+
+          const card = document.createElement("div");
+          card.className = "finding-card" + (!hasMedia ? " no-media" : "");
+          card.id = `finding-${item.id || index + 1}`;
+
+          const sevClass = (item.severity || "minor").toLowerCase();
+
+          card.innerHTML = `
+          <div class="finding-info">
+            <div class="finding-header-row">
+              <span class="finding-idx">Finding #${String(item.id || index + 1).padStart(2, "0")}</span>
+              <span class="finding-badge ${sevClass}">${item.severity || "Observation"}</span>
+            </div>
+            <h3 class="finding-title">${item.title}</h3>
+            ${item.description ? `<p class="finding-desc">${item.description}</p>` : ""}
+            ${
+              hasSpecs
+                ? `
+            <ul class="finding-specs">
+              ${item.page ? `<li><span>Page / Area</span><strong>${item.page}</strong></li>` : ""}
+              ${item.actual ? `<li><span>Observed Behavior</span><strong>${item.actual}</strong></li>` : ""}
+            </ul>
+            `
+                : ""
+            }
+          </div>
+          ${(() => {
+            if (!hasMedia) return "";
+            if (imgs.length === 1) {
+              const single =
+                typeof imgs[0] === "string"
+                  ? { src: imgs[0], caption: item.title }
+                  : imgs[0];
+              return `
+                <div class="finding-media" onclick="openLightbox('${single.src}', '${(single.caption || item.title).replace(/'/g, "\\'")}')">
+                  <img src="${single.src}" alt="${single.caption || item.title}" loading="lazy">
+                  <span class="media-zoom-hint">Click to enlarge ↗</span>
+                </div>
+              `;
+            }
+            return `
+              <div class="finding-media-stack">
+                ${imgs
+                  .map((imgObj, i) => {
+                    const img =
+                      typeof imgObj === "string"
+                        ? { src: imgObj, caption: `${item.title} (${i + 1})` }
+                        : imgObj;
+                    return `
+                      <div>
+                        ${img.caption ? `<div class="finding-media-label">${img.caption}</div>` : ""}
+                        <div class="finding-media" onclick="openLightbox('${img.src}', '${(img.caption || item.title).replace(/'/g, "\\'")}')">
+                          <img src="${img.src}" alt="${img.caption || item.title}" loading="lazy">
+                          <span class="media-zoom-hint">Click to enlarge ↗</span>
+                        </div>
+                      </div>
+                    `;
+                  })
+                  .join("")}
+              </div>
+            `;
+          })()}
+        `;
+          list.appendChild(card);
+        });
+      }
+
+      // Tester findings, in the order they were shared
+      [
+        {
+          id: 1,
+          title: "Image magnifier cursor isn’t applied to the product images",
+          category: "Functional",
+          description:
+            "I see that you’re using an image magnifier cursor, which is a very nice idea, but it’s not applied properly.",
+          page: "Shop — Imani Bag (#/imani)",
+          actual: "The cursor magnifies over buttons, e.g. “Order on WhatsApp”",
+          image: "./assets/feedback/01-image-magnifier-cursor.png",
+        },
+        {
+          id: 2,
+          title: "CTAs are placed too far from the body text they lead",
+          category: "UI & Styling",
+          severity: "Observation",
+          description:
+            "I have noticed in a few sections that the CTAs (calls to action) are far from the body text they lead.",
+          page: "Multiple Pages (Homepage, Contact & Footer)",
+          actual:
+            "Buttons are separated from their copy by excessive whitespace or pinned to the far right viewport edge",
+          images: [
+            {
+              src: "./assets/feedback/02-cta-spacing-footer.png",
+              caption:
+                "Footer Section — “Be first to know when the next bag arrives.”",
+            },
+            {
+              src: "./assets/feedback/02-cta-spacing-instagram.png",
+              caption: "Instagram Section — “Follow us on Instagram”",
+            },
+            {
+              src: "./assets/feedback/02-cta-spacing-contact.png",
+              caption:
+                "Contact Page — “Tell us which one you want.” → “Message LOMZ”",
+            },
+          ],
+        },
+        {
+          id: 3,
+          title:
+            "Is there a reason the prices are not displayed on sections in the homepage?",
+          category: "Question",
+          severity: "Question",
+          images: [
+            {
+              src: "./assets/feedback/03-no-pricing-tiles.png",
+              caption: "Homepage Product Tiles — “Shop now” with no pricing",
+            },
+            {
+              src: "./assets/feedback/03-no-pricing-essentials.png",
+              caption:
+                "Everyday Essentials Section — Specifications listed without price",
+            },
+          ],
+        },
+        {
+          id: 4,
+          title:
+            "Set up analytics and tracking to capture user behaviors and monitor traffic",
+          category: "Non-Functional",
+          severity: "Suggestion",
+          description:
+            "While this is non-functional, I think it’d be nice to set up analytics and tracking on the website to capture user behaviors and monitor traffic. You can use Google Analytics for this.",
+        },
+      ].forEach(window.addFindingItem);
+    </script>
+  </body>
+</html>
